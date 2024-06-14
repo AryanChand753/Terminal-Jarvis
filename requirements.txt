@@ -1,0 +1,16 @@
+# Natural Language Processing
+nltk
+spacy
+
+# Speech Recognition and Synthesis
+SpeechRecognition
+pyttsx3
+
+# Web Requests
+requests
+
+# Email Sending
+smtplib  # Note: smtplib is included in Python's standard library, so you don't need to install it separately
+
+# Other Utilities
+pyaudio
