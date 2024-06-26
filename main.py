@@ -7,7 +7,6 @@ from email.mime.text import MIMEText
 import smtplib
 import threading
 
-# Initialize text-to-speech engine
 engine = pyttsx3.init()
 
 def speak(text):
@@ -19,7 +18,6 @@ def listen():
     with sr.Microphone() as source:
         print("Listening...")
         try:
-            # Use recognizer instance with timeout
             audio = recognizer.listen(source, timeout=30)
             command = recognizer.recognize_google(audio)
             print(f"You said: {command}")
@@ -43,7 +41,7 @@ def respond_to_command(command):
     elif "open" in command:
         if "notepad" in command:
             os.system("notepad")
-        # Add more applications as needed
+        # TODO: ADD MORE APPLICATIONS
     elif "search for" in command:
         query = command.replace("search for", "").strip()
         result = search_web(query)
@@ -63,11 +61,11 @@ def respond_to_command(command):
     elif "exit" in command:
         speak("Goodbye!")
         print("Terminating...")
-        return False  # Signal to exit the main loop
+        return False
     else:
         speak("Sorry, I don't know that command.")
 
-    return True  # Continue the main loop
+    return True
 
 def search_web(query):
     url = f"https://api.duckduckgo.com/?q={query}&format=json"
