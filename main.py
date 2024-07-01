@@ -1,11 +1,11 @@
 import os
 import datetime
+import json
 import pyttsx3
 import speech_recognition as sr
 import requests
 from email.mime.text import MIMEText
 import smtplib
-import threading
 
 engine = pyttsx3.init()
 
@@ -32,39 +32,46 @@ def listen():
             speak("Are you still there?")
             return None
 
-def respond_to_command(command):
-    if "hello" in command:
-        speak("Hello! How can I assist you today?")
-    elif "time" in command:
-        now = datetime.datetime.now().strftime("%H:%M")
-        speak(f"The current time is {now}")
-    elif "open" in command:
-        if "notepad" in command:
-            os.system("notepad")
-        # TODO: ADD MORE APPLICATIONS
-    elif "search for" in command:
-        query = command.replace("search for", "").strip()
-        result = search_web(query)
-        speak(result)
-    elif "send email" in command:
-        speak("What is the subject?")
-        subject = listen()
-        speak("What should the email say?")
-        body = listen()
-        send_email(subject, body, "aryanchand753@gmail.com")
-    elif "set reminder" in command:
-        speak("When should I remind you? Please provide the time in HH:MM format.")
-        time_str = listen()
-        speak("What is the reminder for?")
-        message = listen()
-        add_reminder(time_str, message)
-    elif "exit" in command:
-        speak("Goodbye!")
-        print("Terminating...")
-        return False
-    else:
-        speak("Sorry, I don't know that command.")
-
+def respond_to_command(command, commands_data):
+    for key in commands_data:
+        for sub_key in commands_data[key]:
+            if sub_key in command:
+                if key == "greetings":
+                    speak(commands_data[key][sub_key])
+                elif key == "time":
+                    now = datetime.datetime.now()
+                    response = commands_data[key][sub_key].replace("{{time}}", now.strftime("%H:%M")) \
+                                                        .replace("{{date}}", now.strftime("%Y-%m-%d")) \
+                                                        .replace("{{day}}", now.strftime("%A")) \
+                                                        .replace("{{month}}", now.strftime("%B")) \
+                                                        .replace("{{year}}", now.strftime("%Y"))
+                    speak(response)
+                elif key == "open":
+                    os.system(commands_data[key][sub_key])
+                elif key == "search for":
+                    query = command.replace("search for", "").strip()
+                    result = search_web(query)
+                    speak(result)
+                elif key == "email":
+                    speak(commands_data[key]["prompt_subject"])
+                    subject = listen()
+                    speak(commands_data[key]["prompt_body"])
+                    body = listen()
+                    speak(commands_data[key]["recipient"])
+                    recipient = listen()
+                    send_email(subject, body, recipient)
+                elif key == "reminder":
+                    speak(commands_data[key]["prompt_time"])
+                    time_str = listen()
+                    speak(commands_data[key]["prompt_message"])
+                    message = listen()
+                    add_reminder(time_str, message)
+                elif key == "exit":
+                    speak(commands_data[key][sub_key])
+                    print("Terminating...")
+                    return False
+                return True
+    speak("Sorry, I don't know that command.")
     return True
 
 def search_web(query):
@@ -92,24 +99,36 @@ def send_email(subject, body, to):
 reminders = []
 
 def add_reminder(time_str, message):
-    reminder_time = datetime.datetime.strptime(time_str, "%H:%M")
+    try:
+        reminder_time = datetime.datetime.strptime(time_str, "%H:%M")
+    except ValueError:
+        speak("Invalid time format. Please provide the time in HH:MM format.")
+        return
+
     reminders.append((reminder_time, message))
     speak("Reminder added.")
 
 def check_reminders():
+    global reminders
     now = datetime.datetime.now()
+    new_reminders = []
     for reminder in reminders:
         if reminder[0] <= now:
             speak(f"Reminder: {reminder[1]}")
-            reminders.remove(reminder)
+        else:
+            new_reminders.append(reminder)
+    reminders = new_reminders
 
 if __name__ == "__main__":
+    with open('commands.json', 'r') as f:
+        commands_data = json.load(f)
+
     speak("Jarvis activated")
     try:
         while True:
             command = listen()
             if command:
-                should_continue = respond_to_command(command)
+                should_continue = respond_to_command(command, commands_data)
                 if not should_continue:
                     break
             check_reminders()

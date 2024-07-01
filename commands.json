@@ -1,0 +1,41 @@
+{
+  "greetings": {
+    "hello": "Hello! How can I assist you today?",
+    "hey": "Hey! How can I assist you today?",
+    "hi": "Hi! How can I assist you today?"
+  },
+  "time": {
+    "current": "The current time is {{time}}",
+    "timezone": "The current time in {{timezone}} is {{time}}",
+    "date": "Today is {{date}}",
+    "day": "Today is {{day}}",
+    "month": "The current month is {{month}}",
+    "year": "The current year is {{year}}"
+  },
+  "open": {
+    "notepad": "notepad",
+    "calculator": "calculator",
+    "paint": "mspaint",
+    "word": "winword",
+    "excel": "excel",
+    "powerpoint": "powerpnt",
+    "outlook": "outlook",
+    "vscode": "code"
+  },
+  "email": {
+    "prompt_subject": "What is the subject?",
+    "prompt_body": "What is the message?",
+    "recipient": "What is the recipient?"
+  },
+  "reminder": {
+    "prompt_time": "What is the time of the reminder?",
+    "prompt_message": "What is the message of the reminder?"
+  },
+  "exit": {
+    "bye": "Goodbye! Have a great day!",
+    "exit": "Goodbye! Have a great day!",
+    "quit": "Goodbye! Have a great day!",
+    "close": "Goodbye! Have a great day!",
+    "terminate": "Goodbye! Have a great day!"
+  }
+}
